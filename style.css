@@ -1,0 +1,68 @@
+/* Base Layout */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    transition: background 0.8s ease; /* Smooth transition between weather types */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    /* Default background before search */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                      url('https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?q=80&w=2000');
+}
+
+/* Glassmorphism Container */
+#weather-container {
+    background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    text-align: center;
+    width: 380px;
+}
+
+/* Search UI Styling */
+.search-box {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 8px;
+}
+
+#cityInput {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+#searchBtn {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#searchBtn:hover {
+    background-color: #0056b3;
+}
+
+/* Dynamic Weather Classes (Triggered by JS) */
+body.clear { background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1506466010722-395aa2bef877?q=80&w=2000'); }
+body.clouds { background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1534088568595-a066f710b721?q=80&w=2000'); }
+body.rain { background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?q=80&w=2000'); }
+body.snow { background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=2000'); }
