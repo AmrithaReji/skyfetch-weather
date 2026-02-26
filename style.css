@@ -6,7 +6,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     transition: background 0.8s ease; /* Smooth transition between weather types */
     background-size: cover;
     background-position: center;
@@ -27,7 +27,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
     text-align: center;
-    width: 380px;
+    width: 600px;
 }
 
 /* Search UI Styling */
@@ -55,6 +55,38 @@ body {
     cursor: pointer;
     font-weight: bold;
     transition: 0.3s;
+}
+
+/* --- Add this to the bottom of your style.css --- */
+
+/* This makes the 5 cards sit in a neat row */
+.forecast-container {
+    display: flex;
+    flex-wrap: wrap; /* This makes it responsive for mobile */
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* This styles the individual daily cards */
+.forecast-card {
+    background: rgba(255, 255, 255, 0.1); /* Slight see-through look */
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    min-width: 110px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.forecast-card h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.forecast-card img {
+    width: 60px;
+    height: 60px;
 }
 
 #searchBtn:hover {
