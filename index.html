@@ -3,30 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyFetch Weather Dashboard</title>
+    <title>SkyFetch | Modern Weather Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <div id="weather-container">
-        <h1>SkyFetch Weather</h1>
 
+    <div class="weather-card" id="weather-container">
+        <h1 id="app-title">SkyFetch</h1>
+        
         <div class="search-box">
             <input type="text" id="cityInput" placeholder="Enter city name...">
             <button id="searchBtn">Search</button>
         </div>
 
-        <p id="loading" style="display: none;">Fetching weather data...</p>
+        <div id="recent-searches" class="recent-container"></div>
 
-        <div id="weather-info">
-            <h2 id="city-name"></h2>
-            <img id="weather-icon" src="" alt="Weather Icon">
-            <p id="temperature"></p>
-            <p id="description"></p>
-            <div id="forecast-display" class="forecast-container"></div>
+        <p id="errorMessage" class="error-text"></p>
+
+        <hr class="separator">
+
+        <div id="current-weather">
+            <h2 id="city-name">--</h2>
+            <div class="weather-main">
+                <img id="weather-icon" src="" alt="">
+                <h3 id="temperature">--°C</h3>
+            </div>
+            <p id="description">--</p>
+            <div class="details">
+                <span>Humidity: <b id="humidity">--</b>%</span>
+                <span>Wind: <b id="wind-speed">--</b> km/h</span>
+            </div>
         </div>
 
-        <p id="errorMessage" style="color: red;"></p>
+        <div id="forecast-container" class="forecast-grid"></div>
     </div>
 
     <script src="app.js"></script>
