@@ -1,65 +1,90 @@
-const apiKey = 'd491517114fa36ec47ad8b61c8342bb6'; // Replace with your actual API key
+function WeatherApp() {
+    this.apiKey = 'd491517114fa36ec47ad8b61c8342bb6';
+    this.searchBtn = document.getElementById('searchBtn');
+    this.cityInput = document.getElementById('cityInput');
+    this.recentContainer = document.getElementById('recent-searches');
+    this.errorMsg = document.getElementById('errorMessage');
 
-const searchBtn = document.getElementById('searchBtn');
-const cityInput = document.getElementById('cityInput');
-const loadingText = document.getElementById('loading');
-const errorMessage = document.getElementById('errorMessage');
+    this.searchBtn.addEventListener('click', () => this.getWeather());
 
-// Function using async/await and try-catch (Assignment Requirement)
-async function getWeatherData(city) {
-    try {
-        // Show loading state
-        loadingText.style.display = "block";
-        errorMessage.textContent = "";
-        
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`);
-        
-        // Handle Invalid city names
-        if (!response.ok) {
-            throw new Error("City not found. Please try again.");
-        }
-
-        const data = await response.json();
-        updateUI(data);
-
-    } catch (error) {
-        // User-friendly error messages
-        errorMessage.textContent = error.message;
-        document.body.className = 'error-bg'; // Optional: change bg on error
-    } finally {
-        // Hide loading indicator
-        loadingText.style.display = "none";
+    // TASK: Automatically load last searched city from localStorage
+    const lastCity = localStorage.getItem('lastCity');
+    if (lastCity) {
+        this.getWeather(lastCity);
     }
+    this.renderHistory();
 }
 
-function updateUI(data) {
-    // 1. Dynamic Backdrop Logic
-    const mainWeather = data.weather[0].main.toLowerCase();
-    document.body.className = ''; // Reset classes
+WeatherApp.prototype.getWeather = function(cityOverride) {
+    const city = cityOverride || this.cityInput.value;
+    if (!city) return;
+
+    this.errorMsg.innerText = ""; 
+
+    const currentUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${this.apiKey}`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${this.apiKey}`;
+
+    Promise.all([fetch(currentUrl), fetch(forecastUrl)])
+        .then(responses => {
+            if (!responses[0].ok) throw new Error("City not found");
+            return Promise.all(responses.map(res => res.json()));
+        })
+        .then(data => {
+            this.displayCurrent(data[0]);
+            this.displayForecast(data[1]);
+            
+            // TASK: Save city to localStorage for persistence
+            localStorage.setItem('lastCity', city);
+            this.saveToHistory(city);
+        })
+        .catch(err => {
+            this.errorMsg.innerText = "Error: " + err.message;
+        });
+};
+
+WeatherApp.prototype.saveToHistory = function(city) {
+    let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    if (!history.includes(city)) {
+        history.push(city);
+        localStorage.setItem('searchHistory', JSON.stringify(history.slice(-5)));
+    }
+    this.renderHistory();
+};
+
+WeatherApp.prototype.renderHistory = function() {
+    const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    this.recentContainer.innerHTML = history.map(city => 
+        `<button class="recent-btn" onclick="weatherApp.getWeather('${city}')">${city}</button>`
+    ).join('');
+};
+
+WeatherApp.prototype.displayCurrent = function(data) {
+    document.getElementById('city-name').innerText = data.name;
+    document.getElementById('temperature').innerText = `${Math.round(data.main.temp)}°C`;
+    document.getElementById('description').innerText = data.weather[0].description;
+    document.getElementById('humidity').innerText = data.main.humidity;
+    document.getElementById('wind-speed').innerText = data.wind.speed;
+    const iconCode = data.weather[0].icon;
+    document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+};
+
+WeatherApp.prototype.displayForecast = function(data) {
+    const forecastContainer = document.getElementById('forecast-container');
+    forecastContainer.innerHTML = ""; 
     
-    if (mainWeather.includes("clear")) {
-        document.body.classList.add('clear');
-    } else if (mainWeather.includes("cloud")) {
-        document.body.classList.add('clouds');
-    } else if (mainWeather.includes("rain") || mainWeather.includes("drizzle")) {
-        document.body.classList.add('rain');
-    } else if (mainWeather.includes("snow")) {
-        document.body.classList.add('snow');
-    }
+    // Get one forecast per day (every 8th index)
+    const dailyData = data.list.filter((item, index) => index % 8 === 0);
 
-    // 2. Update Text Content
-    document.getElementById('city-name').textContent = data.name;
-    document.getElementById('temperature').textContent = `${Math.round(data.main.temp)}°C`;
-    document.getElementById('description').textContent = data.weather[0].description;
-    document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-}
+    dailyData.forEach(day => {
+        const date = new Date(day.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' });
+        const card = `
+            <div class="forecast-card">
+                <p>${date}</p>
+                <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png">
+                <p>${Math.round(day.main.temp)}°C</p>
+            </div>`;
+        forecastContainer.innerHTML += card;
+    });
+};// ... Your displayCurrent and displayForecast methods from Part 3 ...
 
-// Event listener for user interaction
-searchBtn.addEventListener('click', () => {
-    const city = cityInput.value.trim();
-    if (city) {
-        getWeatherData(city);
-    } else {
-        errorMessage.textContent = "Please enter a city name."; // Input validation
-    }
-});
+const weatherApp = new WeatherApp();
